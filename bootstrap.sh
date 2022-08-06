@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NET_DEF=./net-def.xml
-OS_ISO=./Fedora-Server-dvd-x86_64-36-1.5.iso
+OS_ISO=large_files/Fedora-Server-dvd-x86_64-36-1.5.iso
 
 BASTION_IP=192.168.140.4
 DNS=192.168.140.1
