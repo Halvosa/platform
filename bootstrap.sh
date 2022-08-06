@@ -16,11 +16,12 @@ sudo virsh net-define $NET_DEF
 sudo virsh net-start cluster
 
 echo "******* Set root password *******"
-ROOTPW=$(python3 -c 'import crypt,getpass;pw=getpass.getpass();f=open("./secrets/rootpw", "w");f.write(crypt.crypt(pw) if (pw==getpass.getpass("Confirm: ")) else exit())')
+python3 -c 'import crypt,getpass;pw=getpass.getpass();f=open("./secrets/rootpw", "w");f.write(crypt.crypt(pw) if (pw==getpass.getpass("Confirm: ")) else exit())'
 
+ROOTPW=$(cat ./secrets/rootpw)
 SSHKEY=$(cat ~/.ssh/id_ed25519.pub)
 
-sed -e "s/__ROOTPW__/$ROOTPW/g" -e "s/__SSHKEY__/$SSHKEY/g" anaconda-ks-template.cfg > /dev/shm/anaconda-ks.cfg
+sed -e "s|__ROOTPW__|$ROOTPW|g" -e "s|__SSHKEY__|'$SSHKEY'|g" anaconda-ks-template.cfg > /dev/shm/anaconda-ks.cfg
 
 virt-install \
     --name bastion.cluster.halvorsaether.com \

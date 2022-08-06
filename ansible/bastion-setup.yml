@@ -4,10 +4,10 @@
   tasks:
     - name: Add Hashicorp repo
       ansible.builtin.yum_repository:
-      name: terraform
-      description: Official Hashicorp repo
-      baseurl:
-        - https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+        name: terraform
+        description: Official Hashicorp repo
+        baseurl:
+          - https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 
 
     - name: Install packages
