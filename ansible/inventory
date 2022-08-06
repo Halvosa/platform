@@ -1,0 +1,6 @@
+---
+
+bastion.cluster.halvorsaether.com   ansible_host: 192.168.140.4
+
+[vm_hosts]
+kvm-01.cluster.halvorsaether.com    ansible_host: 192.168.140.1

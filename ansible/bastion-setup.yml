@@ -1,0 +1,24 @@
+---
+- name: Bastion setup
+  hosts: localhost
+  tasks:
+    - name: Add Hashicorp repo
+      ansible.builtin.yum_repository:
+      name: terraform
+      description: Official Hashicorp repo
+      baseurl:
+        - https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+
+    - name: Install packages
+      ansible.builtin.yum:
+        name:
+          - terraform
+          - packer
+          - git
+        state: latest
+
+    - name: Clone halvosa repo
+      ansible.builtin.git:
+        repo: https://github.com/ansible/ansible-examples.git
+        dest: /src/ansible-examples
