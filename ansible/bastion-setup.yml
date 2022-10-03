@@ -2,13 +2,18 @@
 - name: Bastion setup
   hosts: localhost
   tasks:
+
+    - name: Generate SSH keys for root
+      community.crypto.openssh_keypair:
+        path: /root/.ssh/id_ed25519
+        type: ed25519
+
     - name: Add Hashicorp repo
       ansible.builtin.yum_repository:
         name: terraform
         description: Official Hashicorp repo
         baseurl:
           - https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
-
 
     - name: Install packages
       ansible.builtin.yum:
@@ -17,3 +22,5 @@
           - packer
           - git
         state: latest
+
+    # run terraform init

@@ -42,3 +42,4 @@ rm -f /dev/shm/anaconda-ks.cfg
 ssh root@$BASTION_IP "nmcli con mod enp1s0 ipv4.dns $DNS && nmcli con up enp1s0"
 ssh root@$BASTION_IP "yum -y update && yum -y install git ansible"
 ssh root@$BASTION_IP "git clone $REPO platform && cd platform/ansible && ansible-playbook bastion-setup.yml"
+ssh root@$BASTION_IP "cat /root/.ssh/id_ed25519.pub" >> ~/.ssh/authorized_keys
