@@ -1,0 +1,26 @@
+
+- name: Download ISO
+  ansible.builtin.get_url:
+    url: "{{ packer_iso_url }}"
+    dest: "{{ packer_iso_dest  }}/{{ packer_iso_url | basename }}"
+    mode: '0440'
+    checksum: "{{ packer_iso_checksum }}"
+
+- name: Create directory for storing the kernel and ramdisk
+  ansible.builtin.file:
+    path: "{{ packer_iso_dest  }}/{{ packer_iso_url | basename }}_extract"
+    state: directory
+
+- name: Extract the kernel and ramdisk from the ISO
+  community.general.iso_extract:
+    image: "{{ packer_iso_dest  }}/{{ packer_iso_url | basename }}"
+    dest: "{{ packer_iso_dest  }}/{{ packer_iso_url | basename }}_extract"
+    files:
+    - isolinux/vmlinuz
+    - isolinux/initrd.img
+
+- name: Create a floppy disk containing the kickstart file
+  ansible.builtin.command: >
+    dd if=/dev/zero of={{ packer_ks_floppy }} bs=1440K count=1
+    && mkfs.ext4 {{ packer_ks_floppy }}
+    && mount

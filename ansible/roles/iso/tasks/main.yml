@@ -1,0 +1,10 @@
+---
+# tasks file for iso
+
+- name: Mount ISO
+  ansible.posix.mount:
+    path: "{{ iso_mountpoint }}"
+    src: "{{ iso_isofile }}"
+    fstype: iso9660
+    opts: ro,noauto
+    state: mounted

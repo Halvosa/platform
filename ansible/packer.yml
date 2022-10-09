@@ -1,0 +1,10 @@
+- name: Build golden image
+  hosts: "{{ build_server }}"
+  gather_facts: false
+  become: yes
+  vars_files:
+    - vars/iso.yml
+    - vars/platform.yml
+  tasks:
+    - ansible.builtin.include_role:
+        name: packer
