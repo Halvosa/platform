@@ -21,6 +21,8 @@
           - terraform
           - packer
           - git
+          - qemu-system-x86
+          - tmux
         state: latest
 
     # run terraform init

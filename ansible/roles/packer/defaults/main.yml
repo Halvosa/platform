@@ -1,2 +1,5 @@
 ---
 # defaults file for packer
+
+#packer_ks_floppy: "{{ packer_dir }}/ks_floppy.img"
+packer_log: /var/log/packer

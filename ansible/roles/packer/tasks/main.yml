@@ -1,2 +1,15 @@
 ---
 # tasks file for packer
+
+- name: Prepare files
+  ansible.builtin.include_tasks:
+    file: pre.yml
+  tags:
+    - pre
+
+- name: Run Packer
+  ansible.builtin.shell: >
+    export PACKER_LOG_PATH={{ packer_log | quote }}
+    && export PACKER_LOG=1
+    && packer init {{ packer_project | quote }}
+    && packer build {{ packer_project | quote }}
