@@ -1,0 +1,15 @@
+FROM fedora:36
+
+RUN yum update -y && \
+    yum install -y \
+        bind \
+        bind-utils && \
+    yum clean all
+
+
+COPY named.conf /etc/named.conf
+COPY zones/* /var/named
+
+EXPOSE 53
+
+CMD ["/usr/sbin/named", "-u", "named", "-c", "/etc/named.conf", "-g"]

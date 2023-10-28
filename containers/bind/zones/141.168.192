@@ -1,0 +1,24 @@
+$TTL 2d  ; 172800 seconds
+
+$ORIGIN 141.168.192.IN-ADDR.ARPA.
+
+@     IN      SOA   ns1.execnop.com. hostmaster.execnop.com. (
+
+                                        2003080800 ; serial number
+
+                                        3h         ; refresh
+
+                                        15m        ; update retry
+
+                                        3w         ; expiry
+
+                                        3h         ; nx = nxdomain ttl
+
+                                        )
+
+
+      IN      NS      ns1.execnop.com.
+
+1     IN      PTR     kvm1.execnop.com.
+4     IN      PTR     ns1.execnop.com.
+5     IN      PTR     ipa1.execnop.com.

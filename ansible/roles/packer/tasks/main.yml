@@ -1,15 +1,22 @@
 ---
 # tasks file for packer
 
+- name: Install
+  ansible.builtin.include_tasks: install.yml
+  tags: install
+
 - name: Prepare files
-  ansible.builtin.include_tasks:
-    file: pre.yml
-  tags:
-    - pre
+  ansible.builtin.include_tasks: pre.yml
+  tags: pre
+
+- name: Copy the Packer project to the build server
+  ansible.builtin.copy:
+    src: "{{ packer_project }}/"
+    dest: "{{ packer_dir }}/build"
 
 - name: Run Packer
   ansible.builtin.shell: >
     export PACKER_LOG_PATH={{ packer_log | quote }}
     && export PACKER_LOG=1
-    && packer init {{ packer_project | quote }}
-    && packer build {{ packer_project | quote }}
+    && packer init {{ packer_dir | quote }}/build/
+    && packer build {{ packer_dir | quote }}/build/fedora.pkr.hcl

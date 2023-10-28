@@ -1,3 +1,4 @@
+
 - name: Create Packer directory
   ansible.builtin.file:
     path: "{{ packer_dir  }}"
@@ -16,12 +17,12 @@
     state: directory
 
 - name: Extract the kernel and ramdisk from the ISO
-  community.general.iso-extract:
+  community.general.iso_extract:
     image: "{{ packer_dir  }}/{{ packer_iso_url | basename }}"
     dest: "{{ packer_dir  }}/{{ packer_iso_url | basename }}-extract"
     files:
-    - isolinux/vmlinuz
-    - isolinux/initrd.img
+    - images/pxeboot/vmlinuz
+    - images/pxeboot/initrd.img
 
 # - name: Create a floppy disk containing the kickstart file
 #   ansible.builtin.shell: >

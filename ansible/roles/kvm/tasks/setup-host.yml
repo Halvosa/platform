@@ -1,0 +1,13 @@
+
+- name: Install packages
+  ansible.builtin.package:
+    name:
+      - qemu-kvm
+      - libvirt-daemon-system
+      - virtinst
+    state: latest
+
+- name: Create log directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ kvm_log_dir }}"

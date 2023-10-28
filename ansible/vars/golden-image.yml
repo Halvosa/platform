@@ -1,0 +1,15 @@
+kvm_os_variant: fedora35
+kvm_installer_iso: /data/iso/Fedora-Server-dvd-x86_64-36-1.5.iso
+kvm_kickstart_file: templates/kickstart/fedora36-ks.cfg
+
+kvm_disk_path: /tmp/golden-image.qcow2
+kvm_graphics: none
+
+# KICKSTART
+hostname: golden.execnop.com
+ip: 192.168.150.2
+netmask: 255.255.255.0
+gateway: 192.168.150.1
+packages:
+  - tcpdump
+  - python3

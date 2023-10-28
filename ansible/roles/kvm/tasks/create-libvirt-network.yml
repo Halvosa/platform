@@ -1,0 +1,35 @@
+- name: Check if the network already exists
+  ansible.builtin.command: >
+    virsh net-list --all --name
+  register: kvm_libvirt_net_list
+
+- name: Create tempfile
+  ansible.builtin.tempfile:
+    state: file
+    suffix: libvirt-netdef
+  register: kvm_tempfile_netdef
+
+- name: Generate network definiton file contents
+  ansible.builtin.copy:
+    content: "{{ lookup('template', kvm_netdef_file) }}"
+    dest: "{{ kvm_tempfile_netdef.path }}"
+
+- name: Define the network
+  ansible.builtin.command: >
+    virsh net-define {{ kvm_tempfile_netdef.path }}
+
+- name: Enable autostart
+  ansible.builtin.command: >
+    virsh net-autostart {{ kvm_network }}
+  when: kvm_network is defined
+
+- name: Start the network
+  ansible.builtin.command: >
+    virsh net-start {{ kvm_network }}
+  when: kvm_network is defined
+
+- name: Remove the tempfile
+  ansible.builtin.file:
+    path: "{{ kvm_tempfile_netdef.path }}"
+    state: absent
+  when: kvm_tempfile_netdef.path is defined

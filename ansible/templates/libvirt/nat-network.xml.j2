@@ -1,0 +1,16 @@
+<network>
+  <name>{{ network_name }}</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='{{ nat_port_start | default(1024) }}' end='{{ nat_port_end | default(65535) }}'/>
+    </nat>
+  </forward>
+  <bridge name='{{ bridge_name }}' stp='off' delay='0'/>
+  <ip address='{{ bridge_ip }}' netmask='{{ bridge_netmask }}'>
+{% if if use_dhcp | default(false) %}
+    <dhcp>
+        <range start='{{ dhcp_range_start | default(bridge_ip | ansible.utils.ipmath(1)) }}' end='{{ dhcp_range_end | default((bridge_ip + '/' + bridge_netmask) | ansible.utils.ipaddr('network') | ansible.utils.ipaddr('-2'))}}'/>
+    </dhcp>
+{% endif %}
+  </ip>
+</network>

@@ -24,7 +24,7 @@ SSHKEY=$(cat ~/.ssh/id_ed25519.pub)
 sed -e "s|__ROOTPW__|$ROOTPW|g" -e "s|__SSHKEY__|'$SSHKEY'|g" anaconda-ks-template.cfg > /dev/shm/anaconda-ks.cfg
 
 virt-install \
-    --name bastion.cluster.halvorsaether.com \
+    --name bastion.cluster.execnop.com \
     --boot uefi \
     --memory 2048 \
     --vcpus 2 \

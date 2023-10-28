@@ -1,0 +1,67 @@
+- name: Set up DNS
+  hosts: kvm
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars/platform.yml
+  tasks:
+    - name: Install Podman
+      ansible.builtin.package:
+        name: podman
+        state: latest
+      delegate_to: "{{ build_server }}"
+      run_once: yes
+
+    - name: Create temporary build directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: build
+      register: tempdir
+      delegate_to: "{{ build_server }}"
+      run_once: yes
+
+    - name: Copy build files to the build server
+      ansible.builtin.copy:
+        src: ../containers/bind/
+        dest: "{{ tempdir.path }}"
+      delegate_to: "{{ build_server }}"
+      run_once: yes
+
+    - name: Build DNS container
+      containers.podman.podman_image:
+        name: execnop.com/bind9
+        path: "{{ tempdir.path }}"
+        build:
+          force_rm: true
+          format: oci
+        state: build
+        force: true
+      delegate_to: "{{ build_server }}"
+      run_once: yes
+
+    - name: Create the podman infra network
+      containers.podman.podman_network:
+        name: infra
+        driver: bridge
+        subnet: "{{ networks['infra']['subnet'] }}"
+        gateway: "{{ networks['infra']['gateway'] }}"
+        disable_dns: true
+
+    - name: Run the DNS container
+      containers.podman.podman_container:
+        name: bind
+        image: execnop.com/bind9
+        state: started
+        detach: true
+        network: infra
+        ip: "192.168.141.4"
+        recreate: true
+        hostname: ns1.execnop.com
+        # ports: "192.168.141.1:53:30053/udp"
+
+    - name: Remove temporary build directory
+      ansible.builtin.file:
+        path: tempdir.path
+        state: absent
+      delegate_to: "{{ build_server }}"
+      run_once: yes

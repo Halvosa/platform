@@ -1,2 +1,4 @@
 ---
-# defaults file for roles/kvm
+kvm_graphics: none
+
+kvm_log_dir: /var/log/ansible

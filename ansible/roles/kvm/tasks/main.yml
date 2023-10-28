@@ -1,2 +1,34 @@
 ---
-# tasks file for roles/kvm
+- name: Create tempfile
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: kvm_tempfile_kickstart
+
+- name: Generate kickstart file contents
+  ansible.builtin.copy:
+    content: "{{ lookup('template', kvm_kickstart_file) }}"
+    dest: "{{ kvm_tempfile_kickstart.path }}"
+
+- name: Install VM
+  ansible.builtin.command: >
+    virt-install
+    --boot uefi
+    --name {{ kvm_name }}
+    --memory {{ kvm_memory }}
+    --vcpu {{ kvm_vcpu }}
+    --disk size={{ kvm_disk_size }},path={{ kvm_disk_path }},bus=virtio,format=qcow2
+    --network network={{ kvm_network }},model=virtio
+    --os-variant {{ kvm_os_variant }}
+    --graphics {{ kvm_graphics }}
+    --cdrom {{ kvm_installer_iso }}
+    --location {{ kvm_installer_iso }}
+    --initrd-inject {{ kvm_tempfile_kickstart.path }}
+    --extra-args="inst.ks=file:/{{ kvm_tempfile_kickstart.path | basename }} console=tty1 console=ttyS0"
+    --serial file,path={{ kvm_log_dir }}/install.log
+
+- name: Remove the tempfile
+  ansible.builtin.file:
+    path: "{{ tempfile_kickstart.path }}"
+    state: absent
+  when: tempfile_kickstart.path is defined
