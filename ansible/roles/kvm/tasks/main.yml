@@ -10,6 +10,14 @@
     content: "{{ lookup('template', kvm_kickstart_file) }}"
     dest: "{{ kvm_tempfile_kickstart.path }}"
 
+- when: kvm_download_installer
+  ansible.builtin.include_tasks: get-installer.yml
+
+- name: Ensure the log directory exists
+  ansible.builtin.file:
+    state: directory
+    path: "{{ kvm_log_dir }}"
+
 - name: Install VM
   ansible.builtin.command: >
     virt-install
@@ -26,9 +34,16 @@
     --initrd-inject {{ kvm_tempfile_kickstart.path }}
     --extra-args="inst.ks=file:/{{ kvm_tempfile_kickstart.path | basename }} console=tty1 console=ttyS0"
     --serial file,path={{ kvm_log_dir }}/install.log
+    --check disk_size=off
 
 - name: Remove the tempfile
   ansible.builtin.file:
     path: "{{ tempfile_kickstart.path }}"
     state: absent
   when: tempfile_kickstart.path is defined
+
+- name: Set permissions on the disk file
+  ansible.builtin.file:
+    path: "{{ kvm_disk_path }}"
+    mode: "{{ kvm_diskfile_mode }}"
+    group: "{{ kvm_diskfile_group }}"

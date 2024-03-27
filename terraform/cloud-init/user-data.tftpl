@@ -1,0 +1,8 @@
+#cloud-config
+users:
+  - name: halvosa
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: wheel
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAA

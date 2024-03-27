@@ -1,4 +1,7 @@
 ---
 kvm_graphics: none
-
 kvm_log_dir: /var/log/ansible
+kvm_download_installer: false
+kvm_extract_kernel_and_ramdisk: true
+kvm_diskfile_mode: 0664
+kvm_diskfile_group: kvm
