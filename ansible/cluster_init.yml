@@ -1,0 +1,29 @@
+# check that mac addresses and product_uuid are unique
+#
+- name: Init Kubernetes cluster with kubeadm
+  hosts: "{{ init_host }}"
+  become: true
+  tasks:
+    - name: Copy the kubeadm config to the init host
+      ansible.builtin.copy:
+        src: files/kubeadm-config.yml
+        dest: "/root/"
+
+    - name: Run kubeadm init
+      ansible.builtin.command:
+        cmd: kubeadm init --config /root/kubeadm-config.yml --log-file=/root/kubeadm-init.log
+      register: init
+
+    - name: Fetch the admin kubeconfig
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/halvor/.kube/config
+        flat: yes
+
+    - name: Print output from cluster init
+      ansible.builtin.debug:
+        var: init.stdout_lines
+
+          #scp root@<control-plane-host>:/etc/kubernetes/admin.conf .
+          #kubectl --kubeconfig ./admin.conf get nodes
+          #kubectl config delete-cluster

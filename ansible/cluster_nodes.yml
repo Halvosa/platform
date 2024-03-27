@@ -1,0 +1,10 @@
+- name: Prepare servers for cluster init
+  hosts: "{{ targets | default('cluster') }}"
+  become: true
+  vars:
+    kubernetes_version: "v1.29"
+  roles:
+    - os
+    - k8s
+    - cilium
+

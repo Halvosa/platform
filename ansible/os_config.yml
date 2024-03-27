@@ -1,0 +1,6 @@
+- name: Configure OS basics
+  hosts: "{{ targets }}"
+  become: true
+  roles:
+    - os
+

@@ -1,0 +1,5 @@
+---
+k8s_crio_project_path: "prerelease:/main"
+k8s_disable_selinux: true
+k8s_is_master: false
+k8s_is_worker: false
