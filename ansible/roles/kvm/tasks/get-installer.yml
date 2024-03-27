@@ -1,0 +1,24 @@
+- name: Create directory for the installer
+  ansible.builtin.file:
+    state: directory
+    path: "{{ kvm_installer_iso | dirname }}"
+
+- name: Download the installer ISO
+  ansible.builtin.get_url:
+    url: "{{ kvm_installer_url }}"
+    dest: "{{ kvm_installer_iso }}"
+    checksum: "{{ kvm_installer_checksum }}"
+
+- name: Create directory for storing the kernel and ramdisk
+  when: kvm_extract_kernel_and_ramdisk
+  ansible.builtin.file:
+    path: "{{ kvm_installer_iso }}-extract"
+    state: directory
+
+- name: Extract the kernel and ramdisk from the ISO
+  community.general.iso_extract:
+    image: "{{ kvm_installer_iso }}"
+    dest:  "{{ kvm_installer_iso }}-extract"
+    files:
+      - images/pxeboot/vmlinuz
+      - images/pxeboot/initrd.img

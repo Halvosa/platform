@@ -21,8 +21,18 @@
           - terraform
           - packer
           - git
-          - qemu-system-x86
+          #- qemu-system-x86
           - tmux
+          - python3
+          - python3-pip
         state: latest
+
+    - name: Install pipenv
+      ansible.builtin.command: python3 -m pip install --user pipenv
+
+    - name: Create pipenv from requirements.txt
+      ansible.builtin.command: pipenv install -r LOCATION?
+
+
 
     # run terraform init

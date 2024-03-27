@@ -1,1 +1,6 @@
-build_server: localhost
+build_server: kvm1.execnop.com
+
+networks:
+  infra:
+    subnet: "192.168.141.0/24"
+    gateway: "192.168.141.1"

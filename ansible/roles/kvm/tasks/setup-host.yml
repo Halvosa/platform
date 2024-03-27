@@ -1,0 +1,21 @@
+- become: true
+    - name: Install packages
+      ansible.builtin.package:
+        name:
+          - qemu-kvm
+          - libvirt-daemon-system
+          - virtinst
+          - ovmf
+        state: latest
+
+    - name: Create log directory
+      ansible.builtin.file:
+        state: directory
+        path: "{{ kvm_log_dir }}"
+        group: "{{ kvm  }}"
+
+    - name: Add user to kvm group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: kvm
+        append: yes

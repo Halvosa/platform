@@ -1,0 +1,5 @@
+--realm=EXECNOP.COM
+--ds-password=test123!
+--admin-password=test123!
+--no-ntp
+--unattended

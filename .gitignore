@@ -2,3 +2,4 @@ large_files/
 secrets/
 terraform/.terraform
 packer/output/
+.*.swp

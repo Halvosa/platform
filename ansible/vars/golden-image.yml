@@ -1,0 +1,19 @@
+kvm_os_variant: fedora35
+kvm_installer_url: https://download.fedoraproject.org/pub/fedora/linux/releases/39/Server/x86_64/iso/Fedora-Server-dvd-x86_64-39-1.5.iso
+kvm_installer_checksum: sha256:2755cdff6ac6365c75be60334bf1935ade838fc18de53d4c640a13d3e904f6e9
+kvm_installer_iso: /data/iso/fedora39.iso
+kvm_kickstart_file: templates/kickstart/fedora39-ks.cfg
+
+kvm_disk_path: "/data/qcow2/golden-image-v{{ version }}.qcow2"
+kvm_graphics: none
+
+# KICKSTART
+hostname: base.execnop.com
+  #ip: 192.168.150.2
+  #netmask: 255.255.255.0
+  #gateway: 192.168.150.1
+packages:
+  - tcpdump
+  - python3
+kickstart_username: ansible
+kickstart_sshkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBLnQ9xQHAJ2dWxfY9VDX3wyefdOGpLW9n2G0YNAmFJG halvor@kvm-2"

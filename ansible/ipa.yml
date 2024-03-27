@@ -1,0 +1,48 @@
+
+- name: Set up FreeIPA container
+  hosts: kvm
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars/platform.yml
+  vars:
+    ipa_server_data_dir: /var/lib/ipa-data
+    ipa_server_install_options_file: templates/ipa/ipa-server-install-options
+  tasks:
+    - name: Install Podman
+      ansible.builtin.package:
+        name: podman
+        state: latest
+
+    - name: Create the podman infra network
+      containers.podman.podman_network:
+        name: infra
+        driver: bridge
+        subnet: "{{ networks['infra']['subnet'] }}"
+        gateway: "{{ networks['infra']['gateway'] }}"
+        disable_dns: true
+
+    - name: Create the container's data directory
+      ansible.builtin.file:
+        state: directory
+        path: "{{ ipa_server_data_dir }}"
+
+    - name: Generate the install options template
+      ansible.builtin.template:
+        src: "{{ ipa_server_install_options_file }}"
+        dest: "{{ ipa_server_data_dir }}"
+
+    - name: Run the container
+      containers.podman.podman_container:
+        name: ipa-server
+        image: quay.io/freeipa/freeipa-server:fedora-37
+        state: started
+        hostname: ipa1.execnop.com
+        network: infra
+        ip: "192.168.141.5"
+        dns: "{{ dns_servers }}"
+        read_only: true
+        volume:
+          - "{{ ipa_server_data_dir }}:/data:Z"
+        command: ipa-server-install -U
+        # ports: "192.168.141.1:53:30053/udp"

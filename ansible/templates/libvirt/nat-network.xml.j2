@@ -1,0 +1,20 @@
+<network>
+  <name>{{ network_name }}</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='{{ nat_port_start | default(1024) }}' end='{{ nat_port_end | default(65535) }}'/>
+    </nat>
+  </forward>
+  <bridge name='{{ bridge_name }}' stp='off' delay='0'/>
+{% if use_dns | default(true) %}
+  <domain name='execnop.com'/>
+  <dns enable='yes'></dns>
+{% endif %}
+  <ip address='{{ bridge_ip_cidr | ansible.utils.ipaddr("address") }}' netmask='{{ bridge_ip_cidr | ansible.utils.ipaddr("netmask") }}'>
+{% if use_dhcp | default(false) %}
+    <dhcp>
+        <range start="{{ dhcp_range_start | default(bridge_ip_cidr | ansible.utils.ipmath('1') | ansible.builtin.ipaddr('address')) }}" end="{{ dhcp_range_end | default(bridge_ip_cidr | ansible.utils.ipaddr('subnet') | ansible.utils.ipaddr('-2') | ansible.builtin.ipaddr('address')) }}"/>
+    </dhcp>
+{% endif %}
+  </ip>
+</network>

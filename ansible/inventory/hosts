@@ -1,0 +1,31 @@
+# ----- Physical hosts -----
+[kvm]
+#kvm-1.execnop.com
+kvm-2.execnop.com   ansible_host=192.168.140.1
+
+
+# ----- Pods on KVM-hosts -----
+[infra_pods:children]
+dns
+idp
+
+[dns]
+ns-1.execnop.com    ansible_host=192.168.141.4
+
+[idp]
+idp-1.execnop.com   ansible_host=192.168.141.5
+
+
+# ----- Cluster nodes -----
+[cluster:children]
+masters
+workers
+
+[masters]
+km-1.execnop.com    ansible_host=192.168.140.10
+km-2.execnop.com    ansible_host=192.168.140.11
+
+[workers]
+kw-1.execnop.com    ansible_host=192.168.140.20
+kw-2.execnop.com    ansible_host=192.168.140.21
+kw-3.execnop.com    ansible_host=192.168.140.22

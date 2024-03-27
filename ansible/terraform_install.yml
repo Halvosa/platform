@@ -1,0 +1,16 @@
+- name: Build golden image
+  hosts: "{{ terraform_server }}"
+  gather_facts: false
+  become: yes
+  vars_files:
+    - vars/golden-image.yml
+  tasks:
+    - name: Run terraform role
+      ansible.builtin.include_role:
+        name: terraform
+        tasks_from: install
+
+    - name: Get kernel and ramdisk
+      ansible.builtin.include_role:
+        name: kvm
+        tasks_from: get-installer.yml

@@ -1,0 +1,28 @@
+# Todo: check facts to determine apt or yum
+
+- name: Get the Linux distro
+  ansible.builtin.setup:
+    gather_subset:
+      - distribution
+      - distribution_release
+
+- name: Install hashicorp repo for Ubuntu
+  when: ansible_distribution | lower == 'ubuntu'
+  block:
+    - name: Add hashicorp apt key
+      ansible.builtin.get_url:
+        url: https://apt.releases.hashicorp.com/gpg
+        dest: /etc/apt/trusted.gpg.d/hashicorp.asc
+
+    - name: Add hashicorp repo
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+        state: present
+        filename: hashicorp
+
+- name: Install
+  ansible.builtin.package:
+    name:
+      - packer
+      - ovmf
+    state: latest

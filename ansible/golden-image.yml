@@ -1,0 +1,50 @@
+- name: Create golden image
+  hosts: "{{ build_server }}"
+  vars:
+    kvm_name: "{{ hostname }}"
+    kvm_memory: 4096
+    kvm_vcpu: 2
+    kvm_disk_size: 50
+    network_name: temp
+    network_definition: templates/libvirt/nat-network.xml.j2
+    bridge_name: virbr-temp
+    bridge_ip_cidr: "192.168.150.1/24"
+    use_dhcp: true
+  vars_files:
+    - vars/golden-image.yml
+    - vars/platform.yml
+  tasks:
+    - name: List all VMs
+      ansible.builtin.command: virsh list --all --name
+      register: vm_list
+
+    - name: Create temporary network
+      ansible.builtin.import_role:
+        name: kvm
+        tasks_from: create-libvirt-network
+      vars:
+        kvm_network: "{{ network_name }}"
+        kvm_netdef_file: "{{ network_definition }}"
+
+    - block:
+        - name: Create golden image using kvm role
+          ansible.builtin.import_role:
+            name: kvm
+          vars:
+            kvm_network: "{{ network_name }}"
+
+      rescue:
+        - name: Destroy the VM
+          ansible.builtin.command: "virsh destroy {{ hostname }}"
+
+
+    - tags: cleanup
+      block:
+        - name: Undefine the VM
+          ansible.builtin.command: "virsh undefine {{ hostname }} --nvram"
+
+        - name: Stop the temporary network
+          ansible.builtin.command: "virsh net-destroy {{ network_name }}"
+
+        - name: Undefine the temporary network
+          ansible.builtin.command: "virsh net-undefine {{ network_name }}"
